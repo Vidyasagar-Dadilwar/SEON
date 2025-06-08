@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/user.context';
 import axios from '../config/Axios';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
     const { user } = useUser();
@@ -11,13 +12,16 @@ const Home = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [userEmail, setUserEmail] = useState("");
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         fetchProjects();
     }, []);
 
     const fetchProjects = async () => {
         try {
-            const response = await axios.get('/projects/all');
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/projects/all`);
+            console.log({ response: response.data });
             setProjects(response.data);
         } catch (error) {
             console.error('Error fetching projects:', error);
@@ -72,12 +76,41 @@ const Home = () => {
 
     return (
         <main className="p-4">
-            <div className="projects grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="projects flex flex-wrap gap-3">
+                <button
+                    className="project p-4 border border-slate-300 rounded-lg"
+                    onClick={() => setIsModalOpen(true)}
+                >
+                    <i className="ri-link mr-2"></i>
+                    Create Project
+                </button>
+
                 {projects.map((project) => (
-                    <div key={project._id} className="project p-4 border border-slate-300 rounded-lg">
+                    <div key={project._id} className="project cursor-pointer flex flex-col gap-2 p-4 border border-slate-300 rounded-lg min-w-52 hover:bg-slate-200"
+                        onClick={async () => {
+                            try {
+                                const response = await axios.get(`/projects/${project._id}`);
+                                navigate(`/project`, {
+                                    state: {
+                                        project: response.data
+                                    }
+                                });
+                            } catch (error) {
+                                console.error('Error fetching project details:', error);
+                            }
+                        }}>
                         <h3 className="text-lg font-semibold mb-2">{project.name}</h3>
+                        <div className="flex gap-2">
+                            <small>
+                                <p>
+                                    <i className="ri-user-line"></i>
+                                    Collaborators: {project.users.length}
+                                </p>
+                            </small>
+                        </div>
                         <button
-                            onClick={() => {
+                            onClick={(e) => {
+                                e.stopPropagation();
                                 setSelectedProject(project);
                                 setIsAddUserModalOpen(true);
                             }}
@@ -87,13 +120,6 @@ const Home = () => {
                         </button>
                     </div>
                 ))}
-                <button
-                    className="project p-4 border border-slate-300 rounded-lg"
-                    onClick={() => setIsModalOpen(true)}
-                >
-                    <i className="ri-link mr-2"></i>
-                    Create Project
-                </button>
             </div>
 
             {/* Create Project Modal */}

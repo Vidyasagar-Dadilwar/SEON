@@ -19,7 +19,7 @@ export const getAllProjects = async ({userId}) => {
         throw new Error("userId is required");
     }
 
-    const projects = await Project.find({users: userId});
+    const projects = await Project.find({users: userId}).populate("users");
     return projects;
 }
 
