@@ -25,3 +25,10 @@ export const loginUser = async ({email, password}) => {
 }
 
 
+export const getAllUsers = async ({userId}) => {
+    if(!userId) {
+        throw new Error("userId is required");
+    }
+    const users = await User.find({_id: {$ne: userId}});
+    return users;
+}

@@ -27,7 +27,7 @@ const Register = () => {
         }
         try {
             // Register user
-            const res = await fetch('/users/register', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/users/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

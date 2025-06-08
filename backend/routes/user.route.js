@@ -18,8 +18,11 @@ router.post('/login',
 
 router.get('/profile', authMiddleware.authUser, userController.profileController);
 
+router.get('/find', authMiddleware.authUser, userController.findUserByEmail);
 
 router.get('/logout', authMiddleware.authUser, userController.logoutController);
+
+router.get('/all', authMiddleware.authUser, userController.getAllUsers);
 
 
 export default router;

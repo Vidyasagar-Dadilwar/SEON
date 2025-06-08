@@ -60,3 +60,35 @@ export const logoutController = async (req, res) => {
         res.status(500).json({error: error.message});
     }
 }
+
+export const findUserByEmail = async (req, res) => {
+    try {
+        const { email } = req.query;
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
+        }
+
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({ user });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+
+
+export const getAllUsers = async (req, res) => {
+    try {
+        const loggedInUser = await userModel.findOne({email: req.user.email});
+        const users = await userService.getAllUsers({userId: loggedInUser._id});
+        return res.status(200).json(users);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: error.message});
+    }
+}
+

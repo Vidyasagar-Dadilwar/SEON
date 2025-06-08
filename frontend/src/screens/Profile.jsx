@@ -15,7 +15,7 @@ const Profile = () => {
                     navigate('/login');
                     return;
                 }
-                const response = await axios.get('http://localhost:3000/users/profile', {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/profile`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
